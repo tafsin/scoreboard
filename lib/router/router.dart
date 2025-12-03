@@ -1,4 +1,5 @@
 import 'package:go_router/go_router.dart';
+import 'package:scoreboard/screens/editScreen.dart';
 import 'package:scoreboard/screens/homescreen.dart';
 
 
@@ -10,7 +11,7 @@ final router = GoRouter(
     ),
     GoRoute(
       path: '/edit',
-      builder: (_, __) => const HomeScreen(),
+      builder: (_, __) => const EditScreen(),
     ),
   ],
   initialLocation: '/view',

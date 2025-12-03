@@ -9,9 +9,6 @@ class ScoreController extends Notifier<void>{
   void build() {
     // No state, so leave empty
   }
-
-
-
   Future<void> incrementA(){
     return _ref.update({"teamA":FieldValue.increment(1)});
   }
