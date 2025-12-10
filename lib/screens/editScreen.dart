@@ -1,70 +1,52 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:scoreboard/components/editScore.dart';
-import 'package:scoreboard/components/teamScore.dart';
+import 'package:scoreboard/bloc/score_event.dart';
 import 'package:scoreboard/components/appBackGround.dart';
 import 'package:scoreboard/components/scorecard.dart';
-import 'package:scoreboard/repository/score_proider.dart';
+import '../bloc/score_bloc.dart';
+import '../bloc/score_state.dart';
 import '../components/teamDescription.dart';
-import '../controller/scoreController.dart';
+import '../components/teamsScores.dart';
 
-class EditScreen extends ConsumerWidget {
+class EditScreen extends StatelessWidget {
   const EditScreen({super.key});
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final score = ref.watch(scoreStreamProvider);
-    final controller = ref.read(scoreControllerProvider.notifier);
+  Widget build(BuildContext context) {
     return Scaffold(
-        body: score.when(data: (scored){
-          if (scored == null ) return Center(child: Text("No Data"),);
-          final data = scored as Map<String, dynamic>;
-          int teamA = data['teamA'];
-          int teamB = data['teamB'];
-          return LayoutBuilder(
-              builder: (_, constraints) {
-                return AppBackGround(
-                    child: Center(
-                      child: Scorecard(
-                        child: Center(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment:  CrossAxisAlignment.center,
-                            children: [
-                              Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Teamdescription(name: data["teamAName"], image: "assets/images/TeamA.png"),
-                                  EditScore(score: teamA, onIncrement: controller.incrementA, onDecrement: controller.decrementA),
-                                ],
-                              ),
-                              Teamscore(teamAScore: teamA, teamBScore: teamB),
-                              Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Teamdescription(name: data["teamBName"], image: "assets/images/TeamB.png"),
-                                  EditScore(score: teamB, onIncrement: controller.incrementB, onDecrement: controller.decrementB),
-                                ],
-                              ),
-
-
-
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                );
-
-
-              }
-          );
-        },
-            loading: () => Center(child: CircularProgressIndicator()),
-            error: (e, _){
-              print(e.toString());
-              return Center(child: Text(e.toString()));
-            }
-
+        body: BlocBuilder<ScoreBloc,ScoreState>
+          (builder: (context,state){
+          if(state is ScoreLoadInProgress){
+            return Center(child: CircularProgressIndicator(),);
+          }
+          else if (state is ScoreLoadSuccess){
+            final scoreModel = state.scoreModel;
+            return AppBackGround(
+              child: Scorecard(child: Center(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Teamdescription(name: scoreModel.teamAName, image: "assets/images/TeamA.png"),
+                    SizedBox(width: 10,),
+                    TeamsScores(score: scoreModel.teamAScore, onIncrement: () => context.read<ScoreBloc>().add(IncrementTeamA()),
+                        onDecrement: () => context.read<ScoreBloc>().add(DecrementTeamA()),),
+                    SizedBox(width: 5,),
+                    Icon(Icons.remove, size: 30, color: Colors.grey),
+                    SizedBox(width: 5,),
+                    TeamsScores(score: scoreModel.teamBScore, onIncrement: () => context.read<ScoreBloc>().add(IncrementTeamB()),
+                      onDecrement: () => context.read<ScoreBloc>().add(DecrementTeamB()),),
+                    SizedBox(width: 10,),
+                    Teamdescription(name: scoreModel.teamBName, image: "assets/images/TeamB.png"),
+                  ],
+                ),
+              ),
+              ),
+            );
+          }
+          else{
+            return Center( child: Text('No Data'),);
+          }
+        }
         )
 
     );

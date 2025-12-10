@@ -1,6 +1,9 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:scoreboard/bloc/score_bloc.dart';
+import 'package:scoreboard/bloc/score_event.dart';
+import 'package:scoreboard/repository/score_repository.dart';
 import 'package:scoreboard/router/router.dart';
 
 
@@ -13,7 +16,12 @@ Future<void> main() async {
     messagingSenderId: "866108553184", 
     projectId: "my-app-548b8")
   );
-  runApp(const ProviderScope(child: MyApp()));
+  final repository = ScoreRepository();
+  runApp(
+    BlocProvider(create: (context) => ScoreBloc(repository: repository)..add(LoadScore()),
+    child: MyApp(),),
+
+  );
 }
 
 class MyApp extends StatelessWidget {
