@@ -1,26 +1,43 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:scoreboard/bloc/score_bloc.dart';
-import 'package:scoreboard/bloc/score_event.dart';
-import 'package:scoreboard/repository/score_repository.dart';
 import 'package:scoreboard/router/router.dart';
 
+import 'data/models/score_model.dart';
+import 'data/repositories/score_repository.dart';
+import 'presentation/controllers/score_bloc.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp(
-    options: FirebaseOptions(apiKey: "AIzaSyCrrI2-VU11btnYX-KPfiFqVtJLAcKS3No", 
-    appId: "1:866108553184:web:e16f8069044034d596dd85", 
-    messagingSenderId: "866108553184", 
-    projectId: "my-app-548b8")
+    options: const FirebaseOptions(
+      apiKey: 'AIzaSyCrrI2-VU11btnYX-KPfiFqVtJLAcKS3No',
+      appId: '1:866108553184:web:e16f8069044034d596dd85',
+      messagingSenderId: '866108553184',
+      projectId: 'my-app-548b8',
+    ),
   );
-  final repository = ScoreRepository();
-  runApp(
-    BlocProvider(create: (context) => ScoreBloc(repository: repository)..add(LoadScore()),
-    child: MyApp(),),
 
+  final firestore = FirebaseFirestore.instance;
+  final repository = ScoreRepository(firestore);
+
+  runApp(
+    BlocProvider(
+      create: (context) => ScoreBloc(repository)
+        ..add(
+          const LoadScore(
+            ScoreModel(
+              teamAName: 'Team A',
+              teamAScore: 0,
+              teamBName: 'Team B',
+              teamBScore: 0,
+            ),
+          ),
+        ),
+      child: const MyApp(),
+    ),
   );
 }
 
@@ -39,5 +56,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
-

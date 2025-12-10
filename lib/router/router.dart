@@ -1,7 +1,7 @@
 import 'package:go_router/go_router.dart';
-import 'package:scoreboard/screens/editScreen.dart';
-import 'package:scoreboard/screens/homescreen.dart';
 
+import '../presentation/pages/edit_screen.dart';
+import '../presentation/pages/home_screen.dart';
 
 final router = GoRouter(
   routes: [

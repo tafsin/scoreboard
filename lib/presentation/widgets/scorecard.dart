@@ -1,22 +1,21 @@
-
 import 'package:flutter/material.dart';
 
 class Scorecard extends StatelessWidget {
-  final Widget child;
   const Scorecard({super.key, required this.child});
+
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {
-
-    return  Center(
+    return Center(
       child: FractionallySizedBox(
-        widthFactor: 0.6,   // 70% of screen width
+        widthFactor: 0.6, // 70% of screen width
         heightFactor: 0.5,
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
-        
+
           decoration: BoxDecoration(
-            color: Color(0xFF14213D),
+            color: const Color(0xFF14213D),
             borderRadius: BorderRadius.circular(24),
             boxShadow: const [
               BoxShadow(
