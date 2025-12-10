@@ -13,7 +13,7 @@ class Teamdescription extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Image.asset('assets/images/TeamA.png',
+        Image.asset(image,
           width: imageSize,
           height: imageSize,
           fit: BoxFit.contain,),
